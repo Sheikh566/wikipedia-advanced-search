@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikipedia Advanced Search</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Wikipedia Advanced Search</h1>
+        </header>
+
+        <form action="/search" method="get">
+            <div class="search-section">
+                <div class="main-search">
+                    <input type="text" name="q" class="search-input" value="<%= q %>" placeholder="Search Wikipedia">
+                    <button type="button" class="clear-btn">✕</button>
+                    <button type="submit" class="search-btn">Search</button>
+                </div>
+                <div class="results-count">
+                    Results <strong><%= countStart %> – <%= countEnd %></strong> of <strong><%= countTotal %></strong>
+                </div>
+            </div>
+
+            <div class="advanced-search">
+                <div class="advanced-header">
+                    <span>Advanced search:</span>
+                    <span>▼</span>
+                </div>
+                <div class="advanced-content">
+                    <div class="form-section">
+                        <div class="section-title">Search in page text</div>
+                        <div class="form-row">
+                            <label class="form-label">These words</label>
+                            <input type="text" name="words" class="form-input" value="<%= words %>">
+                            <span class="info-icon">i</span>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">Exactly this text</label>
+                            <input type="text" name="exact" class="form-input" placeholder='"cat loves goat"' value="<%= exact %>">
+                            <span class="info-icon">i</span>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">Not these words</label>
+                            <input type="text" name="exclude" class="form-input" value="<%= exclude %>">
+                            <span class="info-icon">i</span>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">One of these words</label>
+                            <input type="text" name="oneof" class="form-input" value="<%= oneof %>">
+                            <span class="info-icon">i</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <% if (results.length) { %>
+          <div class="results-section">
+              <p style="margin-bottom: 15px;">
+                  There is a page named "<a href="#" style="color: #0645ad;"><%= results[0] ? results[0].title : '' %></a>" on Wikipedia<br>
+                  View (previous 20 | next 20) (20 | 50 | 100 | 250 | 500)
+              </p>
+
+              <% results.forEach(item => { %>
+                  <div class="result-item">
+                      <div class="result-content">
+                          <h3><a href="<%= item.url %>" target="_blank"><%= item.title %></a></h3>
+                          <p><%- item.text %></p>
+                      </div>
+                  </div>
+              <% }) %>
+              <!-- Pagination -->
+              <div class="pagination">
+                <% if (page > 1) { %>
+                  <a href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page - 1 %>&limit=<%= limit %>">Previous</a>
+                <% } %>
+                <span>Page <%= page %> of <%= Math.ceil(countTotal / limit) %></span>
+                <% if (countEnd < countTotal) { %>
+                  <a href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page + 1 %>&limit=<%= limit %>">Next</a>
+                <% } %>
+              </div>
+          </div>
+        <% } %>
+    </div>
+
+    <script>
+        // Toggle advanced search
+        document.querySelector('.advanced-header').addEventListener('click', function() {
+            const content = document.querySelector('.advanced-content');
+            const arrow = this.querySelector('span:last-child');
+            if (content.style.display === 'none') {
+                content.style.display = 'block'; arrow.textContent = '▼';
+            } else {
+                content.style.display = 'none'; arrow.textContent = '▶';
+            }
+        });
+
+        // Clear search input
+        document.querySelector('.clear-btn').addEventListener('click', function() {
+            document.querySelector('.search-input').value = '';
+        });
+
+    </script>
+</body>
+</html>

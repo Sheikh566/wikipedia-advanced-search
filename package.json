@@ -1,0 +1,27 @@
+{
+  "name": "wikipedia-advanced-search",
+  "version": "1.0.0",
+  "description": "An educational repo to understand how PostgreSQL full-text search can be used mimic the Advanced Search feature of Wikipedia",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --env-file=.env app.js",
+    "debug": "nodemon --env-file=.env app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sheikh566/wikipedia-advanced-search.git"
+  },
+  "author": "Sheikh Abdullah",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sheikh566/wikipedia-advanced-search/issues"
+  },
+  "homepage": "https://github.com/Sheikh566/wikipedia-advanced-search#readme",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.16.0"
+  }
+}
