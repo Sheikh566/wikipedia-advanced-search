@@ -2,7 +2,7 @@
   "name": "wikipedia-advanced-search",
   "version": "1.0.0",
   "description": "An educational repo to understand how PostgreSQL full-text search can be used mimic the Advanced Search feature of Wikipedia",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node --env-file=.env app.js",
     "debug": "nodemon --env-file=.env app.js",

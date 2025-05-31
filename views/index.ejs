@@ -1,109 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wikipedia Advanced Search</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
     <div class="container">
-        <header class="header">
-            <h1>Wikipedia Advanced Search</h1>
-        </header>
+      <header class="header">
+        <h1>Wikipedia Advanced Search</h1>
+        <p>
+          This application demonstrates PostgreSQL full-text search using the
+          Hugging Face English Wikipedia dataset (<a
+            href="https://huggingface.co/datasets/wikimedia/wikipedia/viewer/20231101.en"
+            target="_blank"
+            >20231101.en</a
+          >), trimmed to 50,000 rows of the original 6&nbsp;million for cost and
+          performance.
+        </p>
+        <p>
+          Read my accompanying Dev.to blog
+          <a
+            href="https://dev.to/sheikh566/beyond-like-mastering-postgresqls-built-in-full-text-search-4h35"
+            target="_blank"
+            ><i class="fab fa-dev"></i> Beyond LIKE: Mastering PostgreSQL's
+            Built-in Full-Text Search</a
+          >
+        </p>
+        <p>
+          Source code on
+          <a
+            href="https://github.com/Sheikh566/wikipedia-advanced-search#readme"
+            target="_blank"
+            ><i class="fab fa-github"></i> GitHub</a
+          >
+        </p>
+      </header>
 
-        <form action="/search" method="get">
-            <div class="search-section">
-                <div class="main-search">
-                    <input type="text" name="q" class="search-input" value="<%= q %>" placeholder="Search Wikipedia">
-                    <button type="button" class="clear-btn">✕</button>
-                    <button type="submit" class="search-btn">Search</button>
-                </div>
-                <div class="results-count">
-                    Results <strong><%= countStart %> – <%= countEnd %></strong> of <strong><%= countTotal %></strong>
-                </div>
+      <form action="/search" method="get">
+        <div class="search-section">
+          <div class="main-search">
+            <div class="search-input-wrapper">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input
+                type="text"
+                name="q"
+                class="search-input"
+                value="<%= q %>"
+                placeholder="Search Wikipedia"
+              />
+              <button type="button" class="clear-btn">✕</button>
             </div>
-
-            <div class="advanced-search">
-                <div class="advanced-header">
-                    <span>Advanced search:</span>
-                    <span>▼</span>
-                </div>
-                <div class="advanced-content">
-                    <div class="form-section">
-                        <div class="section-title">Search in page text</div>
-                        <div class="form-row">
-                            <label class="form-label">These words</label>
-                            <input type="text" name="words" class="form-input" value="<%= words %>">
-                            <span class="info-icon">i</span>
-                        </div>
-                        <div class="form-row">
-                            <label class="form-label">Exactly this text</label>
-                            <input type="text" name="exact" class="form-input" placeholder='"cat loves goat"' value="<%= exact %>">
-                            <span class="info-icon">i</span>
-                        </div>
-                        <div class="form-row">
-                            <label class="form-label">Not these words</label>
-                            <input type="text" name="exclude" class="form-input" value="<%= exclude %>">
-                            <span class="info-icon">i</span>
-                        </div>
-                        <div class="form-row">
-                            <label class="form-label">One of these words</label>
-                            <input type="text" name="oneof" class="form-input" value="<%= oneof %>">
-                            <span class="info-icon">i</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-        <% if (results.length) { %>
-          <div class="results-section">
-              <p style="margin-bottom: 15px;">
-                  There is a page named "<a href="#" style="color: #0645ad;"><%= results[0] ? results[0].title : '' %></a>" on Wikipedia<br>
-                  View (previous 20 | next 20) (20 | 50 | 100 | 250 | 500)
-              </p>
-
-              <% results.forEach(item => { %>
-                  <div class="result-item">
-                      <div class="result-content">
-                          <h3><a href="<%= item.url %>" target="_blank"><%= item.title %></a></h3>
-                          <p><%- item.text %></p>
-                      </div>
-                  </div>
-              <% }) %>
-              <!-- Pagination -->
-              <div class="pagination">
-                <% if (page > 1) { %>
-                  <a href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page - 1 %>&limit=<%= limit %>">Previous</a>
-                <% } %>
-                <span>Page <%= page %> of <%= Math.ceil(countTotal / limit) %></span>
-                <% if (countEnd < countTotal) { %>
-                  <a href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page + 1 %>&limit=<%= limit %>">Next</a>
-                <% } %>
-              </div>
+            <button type="submit" class="search-btn">Search</button>
           </div>
-        <% } %>
+          <div class="results-count">
+            Results <strong><%= countStart %> – <%= countEnd %></strong> of
+            <strong><%= countTotal %></strong>
+          </div>
+        </div>
+
+        <div class="advanced-search">
+          <div class="advanced-header">
+            <span>Advanced search:</span>
+            <span class="toggle-icon"
+              ><i class="fa-solid fa-angle-down"></i
+            ></span>
+          </div>
+          <div class="advanced-content">
+            <div class="form-section">
+              <div class="section-title">Search in page text</div>
+              <div class="form-row">
+                <label class="form-label">These words</label>
+                <span
+                  class="info-icon"
+                  title="Enter comma-separated words that must appear"
+                  >i</span
+                >
+                <input
+                  type="text"
+                  name="words"
+                  class="form-input"
+                  placeholder="america,trade,economy"
+                  value="<%= words %>"
+                />
+              </div>
+              <div class="form-row">
+                <label class="form-label">Exactly this text</label>
+                <span
+                  class="info-icon"
+                  title="Enter the exact phrase to match (stop words excluded)"
+                  >i</span
+                >
+                <input
+                  type="text"
+                  name="exact"
+                  class="form-input"
+                  placeholder="cat loves goat"
+                  value="<%= exact %>"
+                />
+              </div>
+              <div class="form-row">
+                <label class="form-label">Not these words</label>
+                <span
+                  class="info-icon"
+                  title="Enter comma-separated words to exclude"
+                  >i</span
+                >
+                <input
+                  type="text"
+                  name="exclude"
+                  class="form-input"
+                  placeholder="politics,violent"
+                  value="<%= exclude %>"
+                />
+              </div>
+              <div class="form-row">
+                <label class="form-label">One of these words</label>
+                <span
+                  class="info-icon"
+                  title="Enter comma-separated words where any one may match"
+                  >i</span
+                >
+                <input
+                  type="text"
+                  name="oneof"
+                  class="form-input"
+                  placeholder="mouse,rat,hamster"
+                  value="<%= oneof %>"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <% if (results.length) { %>
+      <div class="results-section">
+        <!-- Pagination -->
+        <div class="pagination">
+          <% if (page > 1) { %>
+          <a
+            href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page - 1 %>&limit=<%= limit %>"
+            >Previous</a
+          >
+          <% } %>
+          <span>Page <%= page %> of <%= Math.ceil(countTotal / limit) %></span>
+          <% if (countEnd < countTotal) { %>
+          <a
+            href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page + 1 %>&limit=<%= limit %>"
+            >Next</a
+          >
+          <% } %>
+        </div>
+        <br />
+        <% results.forEach(item => { %>
+        <div class="result-item">
+          <div class="result-content">
+            <h3>
+              <a href="<%= item.url %>" target="_blank"><%= item.title %></a>
+            </h3>
+            <p><%- item.text %></p>
+          </div>
+        </div>
+        <% }) %>
+        <!-- Pagination -->
+        <div class="pagination">
+          <% if (page > 1) { %>
+          <a
+            href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page - 1 %>&limit=<%= limit %>"
+            >Previous</a
+          >
+          <% } %>
+          <span>Page <%= page %> of <%= Math.ceil(countTotal / limit) %></span>
+          <% if (countEnd < countTotal) { %>
+          <a
+            href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page + 1 %>&limit=<%= limit %>"
+            >Next</a
+          >
+          <% } %>
+        </div>
+      </div>
+      <% } %>
     </div>
-
+    <script
+      src="https://kit.fontawesome.com/b9fd099884.js"
+      crossorigin="anonymous"
+    ></script>
     <script>
-        // Toggle advanced search
-        document.querySelector('.advanced-header').addEventListener('click', function() {
-            const content = document.querySelector('.advanced-content');
-            const arrow = this.querySelector('span:last-child');
-            if (content.style.display === 'none') {
-                content.style.display = 'block'; arrow.textContent = '▼';
-            } else {
-                content.style.display = 'none'; arrow.textContent = '▶';
-            }
+      // Toggle advanced search
+      document
+        .querySelector(".advanced-header")
+        .addEventListener("click", function () {
+          const content = document.querySelector(".advanced-content");
+          const icon = this.querySelector(".toggle-icon");
+          if (content.style.display === "none") {
+            content.style.display = "block";
+            icon.innerHTML = '<i class="fa-solid fa-angle-down"></i>';
+          } else {
+            content.style.display = "none";
+            icon.innerHTML = '<i class="fa-solid fa-angle-right"></i>';
+          }
         });
 
-        // Clear search input
-        document.querySelector('.clear-btn').addEventListener('click', function() {
-            document.querySelector('.search-input').value = '';
+      // Clear search input
+      document
+        .querySelector(".clear-btn")
+        .addEventListener("click", function () {
+          document.querySelector(".search-input").value = "";
         });
-
     </script>
-</body>
+  </body>
 </html>
