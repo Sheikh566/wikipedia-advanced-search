@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wikipedia Advanced Search</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="icon" href="/dev/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/dev/css/styles.css" />
   </head>
   <body>
     <div class="container">
@@ -39,7 +39,7 @@
         </p>
       </header>
 
-      <form action="/search" method="get">
+      <form action="/dev/search" method="get">
         <div class="search-section">
           <div class="main-search">
             <div class="search-input-wrapper">
@@ -84,6 +84,8 @@
                   class="form-input"
                   placeholder="america,trade,economy"
                   value="<%= words %>"
+                  pattern="^[^,\s]+(,[^,\s]+)*$"
+                  title="Enter comma-separated words without spaces"
                 />
               </div>
               <div class="form-row">
@@ -114,6 +116,8 @@
                   class="form-input"
                   placeholder="politics,violent"
                   value="<%= exclude %>"
+                  pattern="^[^,\s]+(,[^,\s]+)*$"
+                  title="Enter comma-separated words to exclude without spaces"
                 />
               </div>
               <div class="form-row">
@@ -129,6 +133,8 @@
                   class="form-input"
                   placeholder="mouse,rat,hamster"
                   value="<%= oneof %>"
+                  pattern="^[^,\s]+(,[^,\s]+)*$"
+                  title="Enter comma-separated words where any one may match without spaces"
                 />
               </div>
             </div>
@@ -142,14 +148,14 @@
         <div class="pagination">
           <% if (page > 1) { %>
           <a
-            href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page - 1 %>&limit=<%= limit %>"
+            href="/dev/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page - 1 %>&limit=<%= limit %>"
             >Previous</a
           >
           <% } %>
           <span>Page <%= page %> of <%= Math.ceil(countTotal / limit) %></span>
           <% if (countEnd < countTotal) { %>
           <a
-            href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page + 1 %>&limit=<%= limit %>"
+            href="/dev/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page + 1 %>&limit=<%= limit %>"
             >Next</a
           >
           <% } %>
@@ -169,14 +175,14 @@
         <div class="pagination">
           <% if (page > 1) { %>
           <a
-            href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page - 1 %>&limit=<%= limit %>"
+            href="/dev/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page - 1 %>&limit=<%= limit %>"
             >Previous</a
           >
           <% } %>
           <span>Page <%= page %> of <%= Math.ceil(countTotal / limit) %></span>
           <% if (countEnd < countTotal) { %>
           <a
-            href="/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page + 1 %>&limit=<%= limit %>"
+            href="/dev/search?q=<%= q %>&words=<%= words %>&exact=<%= exact %>&exclude=<%= exclude %>&oneof=<%= oneof %>&page=<%= page + 1 %>&limit=<%= limit %>"
             >Next</a
           >
           <% } %>

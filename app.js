@@ -54,9 +54,14 @@ app.get("/search", async (req, res) => {
 });
 
 // Redirect root to /search
-app.get("/", (req, res) => res.redirect("/search"));
+app.get("/", (req, res) => res.redirect("/dev/search"));
+app.get("/dev", (req, res) => res.redirect("/dev/search"));
 
-const PORT = +process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log(`Server running at http://localhost:${PORT}`)
-);
+if (process.env.ENVIRONMENT == "local") {
+  const PORT = +process.env.PORT || 3000;
+  app.listen(PORT, () =>
+    console.log(`Server running at http://localhost:${PORT}`)
+  );
+}
+
+module.exports = app;

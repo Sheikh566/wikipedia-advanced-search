@@ -1,0 +1,23 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: sheikh566
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: serverless-wikipedia-advanced-search
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: wikipedia-advanced-search
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-south-1
+  stage: dev
+  memorySize: 128 
+  timeout: 5
+  environment:
+    DATABASE_URL: ${env:DATABASE_URL}
+
+functions:
+  app:
+    handler: handler.handler    # points to the exported handler (see handler.js)
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
